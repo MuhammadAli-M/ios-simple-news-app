@@ -16,13 +16,14 @@ class OnBoardingVC: UIViewController {
     var availableCategories = [Category]()
     
     var selectedCountry: Country?
-    var selectedCategories: [Category]?
+    var selectedCategories = [Category]()
     
     @IBOutlet weak var countryPicker: UIPickerView!
     @IBOutlet weak var categoriesTable: UITableView!
     @IBOutlet weak var countrySelectionLabel: UILabel!
     @IBOutlet weak var categoriesSelectionLabel: UILabel!
     let CategoryCellReuseIdentifier = "CategoryTableCell"
+    let requiredNumberOfSelectedCategories = 3
     
     
     // MARK: Lifecycle
@@ -38,9 +39,15 @@ class OnBoardingVC: UIViewController {
     // MARK: Actions
     
     @objc func nextTapped(){
-        let vc = HeadlinesVC.instantiateVC()
-        vc.modalPresentationStyle = .fullScreen
-        present(vc, animated: true, completion: nil)
+        if let selectionValidMessage = validateSelections(){
+            debugLog(selectionValidMessage)
+            let rules = "Please choose a country and 3 favorite categories"
+            showAlert(title: "Required Info", message: "\(selectionValidMessage)\n\(rules)")
+        }else {
+            let vc = HeadlinesVC.instantiateVC()
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true, completion: nil)
+        }
     }
     
     // MARK: Methods
@@ -55,8 +62,23 @@ class OnBoardingVC: UIViewController {
         
         categoriesSelectionLabel.text = "Select Category"
         categoriesSelectionLabel.font = UIFont.preferredFont(forTextStyle: .title2)
+        
     }
-
+    
+    // TODO: improve it to use errors
+    fileprivate func validateSelections() -> String?{
+        var message: String?
+        guard let _ = selectedCountry, !selectedCategories.isEmpty else {
+            message = "Required values have not been set."
+            return message
+        }
+        
+        if selectedCategories.count != requiredNumberOfSelectedCategories {
+            message = "Selected caregories number do not equal \(requiredNumberOfSelectedCategories)."
+        }
+        
+        return message
+    }
 }
 
 
@@ -135,7 +157,7 @@ extension OnBoardingVC: UITableViewDelegate, UITableViewDataSource{
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedCategories?.append(availableCategories[indexPath.row])
+        selectedCategories.append(availableCategories[indexPath.row])
         debugLog("selected: \(availableCategories[indexPath.row])")
     }
     
@@ -144,13 +166,13 @@ extension OnBoardingVC: UITableViewDelegate, UITableViewDataSource{
         let rows = tableView.indexPathsForSelectedRows?.map({ $0.row })
         debugLog("multiple-selected indicies: \(String(describing: rows))")
         rows?.forEach{
-            selectedCategories?.append(availableCategories[$0])
+            selectedCategories.append(availableCategories[$0])
         }
     }
     
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        selectedCategories?.removeAll{ $0 == availableCategories[indexPath.row] }
+        selectedCategories.removeAll{ $0 == availableCategories[indexPath.row] }
         debugLog("deselected: \(availableCategories[indexPath.row])")
     }
 }
