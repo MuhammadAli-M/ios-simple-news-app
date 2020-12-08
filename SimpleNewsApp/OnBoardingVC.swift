@@ -46,7 +46,8 @@ class OnBoardingVC: UIViewController {
         }else {
             let vc = HeadlinesVC.instantiateVC()
             vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true, completion: nil)
+            let navigation = UINavigationController(rootViewController: vc)
+            present(navigation, animated: true, completion: nil)
         }
     }
     

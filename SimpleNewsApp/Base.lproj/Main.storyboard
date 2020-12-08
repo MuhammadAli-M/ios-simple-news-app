@@ -15,9 +15,34 @@
                     <view key="view" contentMode="scaleToFill" id="8lF-hn-CUA">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="1gi-ZI-flS">
+                                <rect key="frame" x="8" y="60" width="398" height="794"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="HeadlineCell" id="5kP-Hy-7Ax">
+                                        <rect key="frame" x="0.0" y="28" width="398" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5kP-Hy-7Ax" id="HpU-wU-mQI">
+                                            <rect key="frame" x="0.0" y="0.0" width="398" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6rk-TS-YTX"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="1gi-ZI-flS" firstAttribute="leading" secondItem="6rk-TS-YTX" secondAttribute="leading" constant="8" id="DFH-V0-2Zj"/>
+                            <constraint firstItem="1gi-ZI-flS" firstAttribute="top" secondItem="6rk-TS-YTX" secondAttribute="top" constant="16" id="NnZ-bW-eSF"/>
+                            <constraint firstItem="6rk-TS-YTX" firstAttribute="bottom" secondItem="1gi-ZI-flS" secondAttribute="bottom" constant="8" id="ZD1-ng-4lQ"/>
+                            <constraint firstItem="6rk-TS-YTX" firstAttribute="trailing" secondItem="1gi-ZI-flS" secondAttribute="trailing" constant="8" id="rWH-KQ-lyt"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="headlinesTable" destination="1gi-ZI-flS" id="AMm-d0-3Cs"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KuQ-kl-ZAS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
