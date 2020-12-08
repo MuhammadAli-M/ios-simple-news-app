@@ -20,20 +20,18 @@ class OnBoardingVC: UIViewController {
     
     @IBOutlet weak var countryPicker: UIPickerView!
     @IBOutlet weak var categoriesTable: UITableView!
+    @IBOutlet weak var countrySelectionLabel: UILabel!
+    @IBOutlet weak var categoriesSelectionLabel: UILabel!
     let CategoryCellReuseIdentifier = "CategoryTableCell"
     
+    
+    // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Welcome"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Next", style: .plain, target: self, action: #selector(nextTapped))
-
+        setupTitleAndLabels()
         setupCountriesPicker()
-        
         setupCategoriesTableView()
-        updateCategoriesTableSourceData()
-
     }
     
     
@@ -44,6 +42,21 @@ class OnBoardingVC: UIViewController {
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true, completion: nil)
     }
+    
+    // MARK: Methods
+    
+    fileprivate func setupTitleAndLabels() {
+        title = "Welcome"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Next", style: .plain, target: self, action: #selector(nextTapped))
+        
+        countrySelectionLabel.text = "Select Country"
+        countrySelectionLabel.font = UIFont.preferredFont(forTextStyle: .title2)
+        
+        categoriesSelectionLabel.text = "Select Category"
+        categoriesSelectionLabel.font = UIFont.preferredFont(forTextStyle: .title2)
+    }
+
 }
 
 
@@ -97,6 +110,8 @@ extension OnBoardingVC: UITableViewDelegate, UITableViewDataSource{
         categoriesTable.delegate = self
         categoriesTable.dataSource = self
         categoriesTable.allowsMultipleSelection = true
+        
+        updateCategoriesTableSourceData()
     }
     
     
