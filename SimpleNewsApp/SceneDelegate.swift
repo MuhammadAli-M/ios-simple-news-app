@@ -10,12 +10,20 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
+    // TODO: update this to be automatic
+    let firstTime = true
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let windowScene = scene as? UIWindowScene else { return }
+        let controllerIdentifier = firstTime ? OnBoardingVC.storyboardId: HeadlinesVC.storyboardId
+        let vc = storyboard.instantiateViewController (withIdentifier: controllerIdentifier)
+        let navigation = UINavigationController(rootViewController: vc)
+        window = UIWindow(windowScene: windowScene)
+        window?.rootViewController = navigation
+        window?.makeKeyAndVisible()
+        
         guard let _ = (scene as? UIWindowScene) else { return }
     }
 
