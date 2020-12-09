@@ -36,18 +36,24 @@ class HeadlineTableViewCell: UITableViewCell {
         source.text = model.source
         source.font = UIFont.preferredFont(forTextStyle: .subheadline)
         source.textColor = .systemBlue
-        date.text = model.date
+        date.text = model.dateString()
         date.textColor = .secondaryLabel
         date.font = UIFont.preferredFont(forTextStyle: .body)
         desc.text = model.desc
-        headlineImage.image = UIImage(named: model.imageName)
+//        headlineImage.image = UIImage(named: model.imageName) // FIXME: update the image 
     }
 }
 
 struct HeadlineCellModel{
     var title: String
     var source: String
-    var date: String
+    var date: Date
+    var dateToString: ((Date) -> (String))
     var desc: String
-    var imageName: String
+    var url: String
+    var imageUrl: String?
+    
+    func dateString() -> String {
+        return dateToString(date)
+    }
 }

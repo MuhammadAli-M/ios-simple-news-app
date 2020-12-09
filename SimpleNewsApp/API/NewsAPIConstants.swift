@@ -15,7 +15,7 @@ struct NewsAPIConstants {
     
     static let avaiableCategories: [CategoryName] = ["business", "entertainment", "general", "health", "science", "sports", "technology"]
     
-    static let dateFormat = "yyyy-mm-ddThh:mm:ssZ"
+    static let dateFormat = "yyyy-MM-dd HH:mm"
 }
 
 protocol Service {

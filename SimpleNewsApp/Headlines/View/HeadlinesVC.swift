@@ -11,7 +11,6 @@ import UIKit
 
 class HeadlinesVC: UIViewController {
     
-    let tableCellReuseIdentifier = "HeadlineCell" // TODO: rename it
     var newsHeadlines =  [HeadlineCellModel]()
     var categories: [CategoryName]?
     var country: CountryName?
@@ -47,23 +46,34 @@ class HeadlinesVC: UIViewController {
         
         categories.forEach{ category in
             HeadlinesService.shared.getHeadlines(countryCode: countryCode, category: category) { [weak self ](headlines, error) in
-                self?.updateHeadlines(headlines)
+                self?.updateHeadlines(headlines, category: category)
             }
         }
-        
-        
     }
 
-    fileprivate func updateHeadlines(_ headlines: [Article]) {
-        for headlineReponse in headlines {
+    fileprivate func updateHeadlines(_ headlines: [Article], category: CategoryName) {
+        let cellModels = headlines.map{ headlineReponse -> HeadlineCellModel in
             let title = headlineReponse.title
             let desc = headlineReponse.articleDescription
             let date = headlineReponse.publishedAt
             let sourceName = headlineReponse.source.name
-            let model = HeadlineCellModel(title: title, source: sourceName, date: date.string(format: NewsAPIConstants.dateFormat) , desc: desc ?? "Nan", imageName: "") // FIXME: udpate image name properly
-            newsHeadlines.append(model)
+            let url = headlineReponse.url
+            let imageUrl = headlineReponse.urlToImage
+            let model = HeadlineCellModel(title: title,
+                                          source: sourceName + " | " + category.capitalized, // TODO: Localization
+                                          date: date,
+                                          dateToString:  { (someDate: Date) -> String in
+                                                            someDate.string(format: "MMM d, h:mm a")},
+                                          desc: desc ?? "",
+                                          url: url,
+                                          imageUrl: imageUrl) // FIXME: udpate image name properly
+            return model
         }
+        newsHeadlines.append( contentsOf: cellModels)
         
+        newsHeadlines.sort { (first, second) -> Bool in
+            first.date.compare(second.date) == .orderedDescending
+        }
         DispatchQueue.main.async {
             self.headlinesTable.reloadData()
         }
@@ -76,7 +86,6 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
     
     
     fileprivate func setupTableView(table: UITableView){
-        table.register(UITableViewCell.self, forCellReuseIdentifier: tableCellReuseIdentifier)
         table.delegate = self
         table.dataSource = self
         table.rowHeight = UITableView.automaticDimension
@@ -94,6 +103,12 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
         cell.configure(model: newsHeadlines[indexPath.row])
 
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let url = URL(string: newsHeadlines[indexPath.row].url) else { return }
+        UIApplication.shared.open(url)
+
     }
     
 }
