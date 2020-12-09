@@ -45,8 +45,10 @@ class OnBoardingVC: UIViewController {
             showAlert(title: "Required Info", message: "\(selectionValidMessage)\n\(rules)")
         }else {
             let vc = HeadlinesVC.instantiateVC()
-            vc.modalPresentationStyle = .fullScreen
+            vc.categories = selectedCategories
+            vc.country = selectedCountry
             let navigation = UINavigationController(rootViewController: vc)
+            navigation.modalPresentationStyle = .fullScreen
             present(navigation, animated: true, completion: nil)
         }
     }
