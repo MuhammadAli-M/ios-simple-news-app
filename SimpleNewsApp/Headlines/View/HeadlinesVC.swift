@@ -7,7 +7,7 @@
 
 
 import UIKit
-typealias Headline = String
+//typealias Headline = String
 
 class HeadlinesVC: UIViewController {
     
@@ -45,7 +45,8 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
         table.register(UITableViewCell.self, forCellReuseIdentifier: tableCellReuseIdentifier)
         table.delegate = self
         table.dataSource = self
-        
+        table.rowHeight = UITableView.automaticDimension
+        table.estimatedRowHeight = 200
     }
     
     
@@ -54,11 +55,15 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: tableCellReuseIdentifier) ?? UITableViewCell()
-        cell.textLabel?.text = newsHeadlines[indexPath.row]
-        // TODO: improve the selection style
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: HeadlineTableViewCell.Id) as? HeadlineTableViewCell else {return UITableViewCell()}
+        cell.title.text = newsHeadlines[indexPath.row]
+        cell.source.text = "CNN"
+        cell.headlineImage.image = UIImage(named: "img2")
+        cell.date.text = "12 - 12 - 2020"
+        cell.desc.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. "
         return cell
     }
+    
 }
 
 
@@ -66,3 +71,4 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
 extension HeadlinesVC: Storyboardable{
     static var storyboardName: StoryboardName = .Main
 }
+
