@@ -12,15 +12,18 @@ import UIKit
 class HeadlinesVC: UIViewController {
     
     let tableCellReuseIdentifier = "HeadlineCell" // TODO: rename it
-    var newsHeadlines = ["Yes", "No"]//[Headline]()
+    var newsHeadlines =  [HeadlineCellModel]()
+    var categories: [CategoryName]?
+    var country: CountryName?
     
     @IBOutlet weak var headlinesTable: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTitleAndBarButton()
 
+        setupTitleAndBarButton()
         setupTableView(table: headlinesTable)
+        requestTopHeadlines()
     }
 
     
@@ -36,7 +39,38 @@ class HeadlinesVC: UIViewController {
     @objc func searchTapped(){
         debugLog("tapped")
     }
+    
+    fileprivate func requestTopHeadlines() {
+        guard let categories = categories,
+              let country = country,
+              let countryCode = CountryManager().codeForCountryName(country) else {return}
+        
+        categories.forEach{ category in
+            HeadlinesService.shared.getHeadlines(countryCode: countryCode, category: category) { [weak self ](headlines, error) in
+                self?.updateHeadlines(headlines)
+            }
+        }
+        
+        
+    }
+
+    fileprivate func updateHeadlines(_ headlines: [Article]) {
+        for headlineReponse in headlines {
+            let title = headlineReponse.title
+            let desc = headlineReponse.articleDescription
+            let date = headlineReponse.publishedAt
+            let sourceName = headlineReponse.source.name
+            let model = HeadlineCellModel(title: title, source: sourceName, date: date.string(format: NewsAPIConstants.dateFormat) , desc: desc ?? "Nan", imageName: "") // FIXME: udpate image name properly
+            newsHeadlines.append(model)
+        }
+        
+        DispatchQueue.main.async {
+            self.headlinesTable.reloadData()
+        }
+    }
+
 }
+
 
 extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
     
@@ -56,11 +90,9 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: HeadlineTableViewCell.Id) as? HeadlineTableViewCell else {return UITableViewCell()}
-        cell.title.text = newsHeadlines[indexPath.row]
-        cell.source.text = "CNN"
-        cell.headlineImage.image = UIImage(named: "img2")
-        cell.date.text = "12 - 12 - 2020"
-        cell.desc.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. "
+        
+        cell.configure(model: newsHeadlines[indexPath.row])
+
         return cell
     }
     

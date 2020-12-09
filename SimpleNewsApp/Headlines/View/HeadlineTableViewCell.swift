@@ -18,7 +18,6 @@ class HeadlineTableViewCell: UITableViewCell {
     
     static let Id = "HeadlineTableViewCell"
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -30,4 +29,25 @@ class HeadlineTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func configure(model: HeadlineCellModel){
+        title.text = model.title
+        title.font = UIFont.preferredFont(forTextStyle: .title2)
+        source.text = model.source
+        source.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        source.textColor = .systemBlue
+        date.text = model.date
+        date.textColor = .secondaryLabel
+        date.font = UIFont.preferredFont(forTextStyle: .body)
+        desc.text = model.desc
+        headlineImage.image = UIImage(named: model.imageName)
+    }
+}
+
+struct HeadlineCellModel{
+    var title: String
+    var source: String
+    var date: String
+    var desc: String
+    var imageName: String
 }
