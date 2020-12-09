@@ -132,7 +132,7 @@ extension OnBoardingVC: UITableViewDelegate, UITableViewDataSource{
     
     
     fileprivate func updateCategoriesTableSourceData(){
-        availableCategories = ["business", "entertainment", "general", "health", "science", "sports", "technology"]
+        availableCategories =  NewsAPIConstants.avaiableCategories
     }
 
     
