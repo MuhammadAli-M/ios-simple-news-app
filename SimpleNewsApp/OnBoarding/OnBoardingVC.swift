@@ -7,16 +7,16 @@
 
 import UIKit
 
-typealias Category = String
-typealias Country = String
+typealias CategoryName = String
+typealias CountryName = String
 
 class OnBoardingVC: UIViewController {
     
-    var availableCountries = [Country]()
-    var availableCategories = [Category]()
+    var availableCountries = [CountryName]()
+    var availableCategories = [CategoryName]()
     
-    var selectedCountry: Country?
-    var selectedCategories = [Category]()
+    var selectedCountry: CountryName?
+    var selectedCategories = [CategoryName]()
     
     @IBOutlet weak var countryPicker: UIPickerView!
     @IBOutlet weak var categoriesTable: UITableView!
@@ -92,15 +92,8 @@ extension OnBoardingVC: UIPickerViewDelegate, UIPickerViewDataSource{
     }
 
     fileprivate func updatePickerSourceData(){
-        let availableCountryCodes = ["ae", "ar", "at", "au", "be", "bg", "br", "ca", "ch", "cn", "co", "cu", "cz", "de", "eg", "fr", "gb", "gr", "hk", "hu", "id", "ie", "il", "in", "it", "jp", "kr", "lt", "lv", "ma", "mx", "my", "ng", "nl", "no", "nz", "ph", "pl", "pt", "ro", "rs", "ru", "sa", "se", "sg", "si", "sk", "th", "tr", "tw", "ua", "us", "ve", "za"]
-        
-        availableCountries = availableCountryCodes.compactMap{ code in
-            let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
-            let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id)
-            return name
-        }
+        availableCountries = CountryManager().availableCountries()
         selectedCountry = availableCountries.first
-
     }
     
     
