@@ -139,7 +139,9 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
     
 }
 
-
+extension HeadlinesVC: UITextFieldDelegate{
+    
+}
 
 extension HeadlinesVC: Storyboardable{
     static var storyboardName: StoryboardName = .Main
