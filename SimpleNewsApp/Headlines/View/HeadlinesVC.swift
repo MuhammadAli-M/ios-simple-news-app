@@ -73,13 +73,25 @@ class HeadlinesVC: UIViewController {
     }
     
     fileprivate func requestTopHeadlines() {
+        let group = DispatchGroup()
         guard let categories = categories,
               let country = country,
               let countryCode = CountryManager().codeForCountryName(country) else {return}
         
         categories.forEach{ category in
+            group.enter()
             HeadlinesService.shared.getHeadlines(countryCode: countryCode, category: category) { [weak self ](headlines, error) in
                 self?.updateHeadlines(headlines, category: category)
+                group.leave()
+            }
+        }
+
+        group.notify(queue: DispatchQueue.global()) {
+            self.newsHeadlines.sort { (first, second) -> Bool in
+                first.date.compare(second.date) == .orderedDescending
+            }
+            DispatchQueue.main.async {
+                self.headlinesTable.reloadData()
             }
         }
     }
