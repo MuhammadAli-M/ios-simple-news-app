@@ -146,7 +146,7 @@ extension OnBoardingVC: UITableViewDelegate, UITableViewDataSource{
     // TODO: save strings in variables
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCellReuseIdentifier) ?? UITableViewCell()
-        cell.textLabel?.text = availableCategories[indexPath.row]
+        cell.textLabel?.text = availableCategories[indexPath.row].capitalized
         // TODO: improve the selection style
         return cell
     }
