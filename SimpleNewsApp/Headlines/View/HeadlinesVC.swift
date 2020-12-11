@@ -14,29 +14,62 @@ class HeadlinesVC: UIViewController {
     var newsHeadlines =  [HeadlineCellModel]()
     var categories: [CategoryName]?
     var country: CountryName?
+    @IBOutlet weak var searchTextField: UITextField!
     
     @IBOutlet weak var headlinesTable: UITableView!
     
+    var searchEnabled = false
+    let searchVCTitle = "Search"
+    let headlinesVCTitle = "Headlines"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.searchTextField.alpha = 0
+        self.searchTextField.isHidden = true
+        self.searchTextField.delegate = self
         setupTitleAndBarButton()
         setupTableView(table: headlinesTable)
         requestTopHeadlines()
     }
-
+    
     
     fileprivate func setupTitleAndBarButton() {
-        title = "Headlines"
+        title = headlinesVCTitle
         navigationController?.navigationBar.prefersLargeTitles = true
         let button = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchTapped))
         button.tintColor = .label
         navigationItem.rightBarButtonItem = button
     }
 
-
+    
     @objc func searchTapped(){
         debugLog("tapped")
+        
+        searchEnabled.toggle()
+        enableSearchUI(show: searchEnabled)
+    }
+    
+    fileprivate func enableSearchUI(show: Bool) {
+        let fadeTextAnimation = CATransition()
+        fadeTextAnimation.duration = 0.5
+        fadeTextAnimation.type = .fade
+        
+        navigationController?.navigationBar.layer.add(fadeTextAnimation, forKey: nil)
+        navigationItem.title = show ? self.searchVCTitle : self.headlinesVCTitle
+        
+        self.searchTextField.text = ""
+        
+        // TODO: refactor repeated code
+        _ = show ? self.searchTextField.becomeFirstResponder() :  self.searchTextField.resignFirstResponder()
+        _ = show ? self.headlinesTable.resignFirstResponder() : self.headlinesTable.becomeFirstResponder()
+        
+        UIView.animate(withDuration: 2, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseIn) {
+            
+            self.searchTextField.alpha = show ? 1: 0
+            self.searchTextField.isHidden = !show
+            self.headlinesTable.isHidden = show
+            
+        }completion: { (_) in}
     }
     
     fileprivate func requestTopHeadlines() {
@@ -66,17 +99,10 @@ class HeadlinesVC: UIViewController {
                                                             someDate.string(format: "MMM d, h:mm a")},
                                           desc: desc ?? "",
                                           url: url,
-                                          imageUrl: imageUrl) // FIXME: udpate image name properly
+                                          imageUrlString: imageUrl ?? "") // FIXME: udpate image name properly
             return model
         }
         newsHeadlines.append( contentsOf: cellModels)
-        
-        newsHeadlines.sort { (first, second) -> Bool in
-            first.date.compare(second.date) == .orderedDescending
-        }
-        DispatchQueue.main.async {
-            self.headlinesTable.reloadData()
-        }
     }
 
 }

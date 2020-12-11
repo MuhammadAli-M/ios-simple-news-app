@@ -16,6 +16,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xRz-K7-Bvp">
+                                <rect key="frame" x="16" y="60" width="382" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="dGK-Eh-iOX"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="search"/>
+                            </textField>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="1gi-ZI-flS">
                                 <rect key="frame" x="8" y="60" width="398" height="794"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -75,7 +83,7 @@
                                         <connections>
                                             <outlet property="date" destination="4vm-Ip-9X2" id="zYk-qy-a91"/>
                                             <outlet property="desc" destination="SIH-v7-h78" id="9vU-Bb-VW0"/>
-                                            <outlet property="headlineImage" destination="zUT-T2-N4M" id="RgG-0s-shY"/>
+                                            <outlet property="headlineImageView" destination="zUT-T2-N4M" id="RgG-0s-shY"/>
                                             <outlet property="source" destination="L1E-R4-b2Z" id="OHd-So-Gpp"/>
                                             <outlet property="title" destination="Hok-OU-DDd" id="IZH-Z0-0XA"/>
                                         </connections>
@@ -86,14 +94,18 @@
                         <viewLayoutGuide key="safeArea" id="6rk-TS-YTX"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="xRz-K7-Bvp" firstAttribute="top" secondItem="6rk-TS-YTX" secondAttribute="top" constant="16" id="2Gg-9K-AsA"/>
+                            <constraint firstItem="xRz-K7-Bvp" firstAttribute="trailing" secondItem="6rk-TS-YTX" secondAttribute="trailing" constant="-16" id="Ai9-QG-eXC"/>
                             <constraint firstItem="1gi-ZI-flS" firstAttribute="leading" secondItem="6rk-TS-YTX" secondAttribute="leading" constant="8" id="DFH-V0-2Zj"/>
                             <constraint firstItem="1gi-ZI-flS" firstAttribute="top" secondItem="6rk-TS-YTX" secondAttribute="top" constant="16" id="NnZ-bW-eSF"/>
                             <constraint firstItem="6rk-TS-YTX" firstAttribute="bottom" secondItem="1gi-ZI-flS" secondAttribute="bottom" constant="8" id="ZD1-ng-4lQ"/>
+                            <constraint firstItem="xRz-K7-Bvp" firstAttribute="leading" secondItem="6rk-TS-YTX" secondAttribute="leading" constant="16" id="iGf-Vo-L0G"/>
                             <constraint firstItem="6rk-TS-YTX" firstAttribute="trailing" secondItem="1gi-ZI-flS" secondAttribute="trailing" constant="8" id="rWH-KQ-lyt"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="headlinesTable" destination="1gi-ZI-flS" id="AMm-d0-3Cs"/>
+                        <outlet property="searchTextField" destination="xRz-K7-Bvp" id="36G-QO-2NI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KuQ-kl-ZAS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -181,7 +193,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AEh-v7-9sP" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="111.59420289855073" y="103.79464285714285"/>
+            <point key="canvasLocation" x="159" y="72"/>
         </scene>
     </scenes>
     <resources>
