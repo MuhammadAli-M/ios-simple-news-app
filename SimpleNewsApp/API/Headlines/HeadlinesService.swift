@@ -35,8 +35,8 @@ class HeadlinesService: NewsService{
             
             do{
                 let headlinesResponseData = try newJSONDecoder().decode(HeadlinesResponseData.self, from: data)
-                completionHandler(headlinesResponseData.articles ?? [],nil)
-                debugLog("headlinesResponseData is recieved")
+                completionHandler(headlinesResponseData.articles,nil)
+                debugLog("recieved \(headlinesResponseData.articles.count)articles ")
             }catch{
                 completionHandler([],error)
                 errorLog("while json parsing, error : \(error.localizedDescription)")
