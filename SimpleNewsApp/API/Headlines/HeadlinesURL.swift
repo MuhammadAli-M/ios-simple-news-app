@@ -10,7 +10,7 @@ import Foundation
 
 struct HeadlinesURL{
     let baseUrl: String
-    let queries: [HeadlineQuery]
+    var queries: [HeadlineQuery]
     
     var url: URL?{
         guard let url = URL(string: baseUrl) else {return nil}

@@ -9,19 +9,37 @@
 import UIKit
 //typealias Headline = String
 
+protocol HeadlinesModel {
+    var headlines: [HeadlineCellModel] { get set}
+}
+
+class SearchHeadlinesModel: HeadlinesModel {
+    var headlines = [HeadlineCellModel]()
+    var searchText: String
+    
+    init(searchText: String){
+        self.searchText = searchText
+    }
+}
+
+class FeedHeadlinesModel: HeadlinesModel {
+    var headlines = [HeadlineCellModel]()
+}
+
 class HeadlinesVC: UIViewController {
     
-    var newsHeadlines =  [HeadlineCellModel]()
+    var tableHeadlines =  [HeadlineCellModel]()
     var categories: [CategoryName]?
     var country: CountryName?
     @IBOutlet weak var searchTextField: UITextField!
-    
     @IBOutlet weak var headlinesTable: UITableView!
     
     var searchEnabled = false
     let searchVCTitle = "Search"
     let headlinesVCTitle = "Headlines"
-    
+    var searchHeadlinesModel: HeadlinesModel?
+    var feedHeadlinesModel: HeadlinesModel = FeedHeadlinesModel()
+    var isSearchResultsShown = false
     override func viewDidLoad() {
         super.viewDidLoad()
         self.searchTextField.alpha = 0
@@ -29,25 +47,47 @@ class HeadlinesVC: UIViewController {
         self.searchTextField.delegate = self
         setupTitleAndBarButton()
         setupTableView(table: headlinesTable)
-        requestTopHeadlines()
+        requestHeadlines()
     }
     
+    
+    fileprivate func setSearchNavigaionBtn() {
+        let button = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchTapped))
+        button.tintColor = .label
+        navigationItem.rightBarButtonItem = button
+    }
     
     fileprivate func setupTitleAndBarButton() {
         title = headlinesVCTitle
         navigationController?.navigationBar.prefersLargeTitles = true
-        let button = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchTapped))
-        button.tintColor = .label
-        navigationItem.rightBarButtonItem = button
+        setSearchNavigaionBtn()
     }
 
     
     @objc func searchTapped(){
         debugLog("tapped")
-        
+        setSearchNavigaionBtn()
         searchEnabled.toggle()
         enableSearchUI(show: searchEnabled)
+        isSearchResultsShown = false
     }
+    
+    func addResetButton() {
+        let button = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelSearchTapped))
+        button.tintColor = .label
+        navigationItem.rightBarButtonItems?.append(button)
+
+    }
+    
+    @objc func cancelSearchTapped(){
+        title = headlinesVCTitle
+        tableHeadlines = feedHeadlinesModel.headlines
+        headlinesTable.reloadData()
+        isSearchResultsShown = false
+        navigationItem.rightBarButtonItems?.removeAll()
+        setSearchNavigaionBtn()
+    }
+    
     
     fileprivate func enableSearchUI(show: Bool) {
         let fadeTextAnimation = CATransition()
@@ -72,22 +112,38 @@ class HeadlinesVC: UIViewController {
         }completion: { (_) in}
     }
     
-    fileprivate func requestTopHeadlines() {
+    // TODO: refactor this method to separate the UI & logic handling
+    fileprivate func requestHeadlines(_ searchText: String? = nil) {
         let group = DispatchGroup()
         guard let categories = categories,
               let country = country,
               let countryCode = CountryManager().codeForCountryName(country) else {return}
         
+        var model: HeadlinesModel = feedHeadlinesModel
+        // TODO: finsih it
+        if let searchText = searchText {
+            model = SearchHeadlinesModel(searchText: searchText)
+            searchHeadlinesModel = model
+            isSearchResultsShown = true
+        }
+        
         categories.forEach{ category in
             group.enter()
-            HeadlinesService.shared.getHeadlines(countryCode: countryCode, category: category) { [weak self ](headlines, error) in
-                self?.updateHeadlines(headlines, category: category)
+            HeadlinesService.shared.getHeadlines(countryCode: countryCode,
+                                                 category: category,
+                                                 searchText: searchText) { [weak self ](headlines, error) in
+                self?.updateHeadlines(headlinesSource: &model.headlines ,
+                                      headlines,
+                                      category: category)
                 group.leave()
             }
         }
 
+        
         group.notify(queue: DispatchQueue.global()) {
-            self.newsHeadlines.sort { (first, second) -> Bool in
+            self.tableHeadlines = model.headlines
+
+            self.tableHeadlines.sort { (first, second) -> Bool in
                 first.date.compare(second.date) == .orderedDescending
             }
             DispatchQueue.main.async {
@@ -96,7 +152,9 @@ class HeadlinesVC: UIViewController {
         }
     }
 
-    fileprivate func updateHeadlines(_ headlines: [Article], category: CategoryName) {
+    fileprivate func updateHeadlines(headlinesSource: inout [HeadlineCellModel] ,
+                                     _ headlines: [Article],
+                                     category: CategoryName) {
         let cellModels = headlines.map{ headlineReponse -> HeadlineCellModel in
             let title = headlineReponse.title
             let desc = headlineReponse.articleDescription
@@ -114,7 +172,7 @@ class HeadlinesVC: UIViewController {
                                           imageUrlString: imageUrl ?? "") // FIXME: udpate image name properly
             return model
         }
-        newsHeadlines.append( contentsOf: cellModels)
+        headlinesSource.append( contentsOf: cellModels)
     }
 
 }
@@ -132,19 +190,19 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return newsHeadlines.count
+        return tableHeadlines.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: HeadlineTableViewCell.Id) as? HeadlineTableViewCell else {return UITableViewCell()}
         
-        cell.configure(model: newsHeadlines[indexPath.row])
+        cell.configure(model: tableHeadlines[indexPath.row])
 
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let url = URL(string: newsHeadlines[indexPath.row].url) else { return }
+        guard let url = URL(string: tableHeadlines[indexPath.row].url) else { return }
         UIApplication.shared.open(url)
 
     }
@@ -153,6 +211,26 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
 
 extension HeadlinesVC: UITextFieldDelegate{
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        debugLog("request")
+        
+        guard let text = textField.text, !text.isEmpty else {
+            return false
+        }
+        
+        requestSearchForHeadlines(text)
+        
+        return true
+    }
+    
+    
+    func requestSearchForHeadlines(_ searchText: String){
+        requestHeadlines(searchText)
+        searchEnabled = false
+        enableSearchUI(show: searchEnabled)
+        title = "Search Results"
+        addResetButton()
+    }
 }
 
 extension HeadlinesVC: Storyboardable{
