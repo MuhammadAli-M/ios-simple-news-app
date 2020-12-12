@@ -28,18 +28,20 @@ class FeedHeadlinesModel: HeadlinesModel {
 
 class HeadlinesVC: UIViewController {
     
-    var tableHeadlines =  [HeadlineCellModel]()
+    private var tableHeadlines =  [HeadlineCellModel]()
     var categories: [CategoryName]?
     var country: CountryName?
     @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var headlinesTable: UITableView!
     
-    var searchEnabled = false
-    let searchVCTitle = "Search"
-    let headlinesVCTitle = "Headlines"
-    var searchHeadlinesModel: HeadlinesModel?
-    var feedHeadlinesModel: HeadlinesModel = FeedHeadlinesModel()
-    var isSearchResultsShown = false
+    private var searchEnabled = false
+    private let searchVCTitle = "Search"
+    private let headlinesVCTitle = "Headlines"
+    private let searchResultsVCTitle = "Search Results"
+    private var searchHeadlinesModel: HeadlinesModel?
+    private var feedHeadlinesModel: HeadlinesModel = FeedHeadlinesModel()
+    private var isSearchResultsShown = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.searchTextField.alpha = 0
@@ -64,7 +66,7 @@ class HeadlinesVC: UIViewController {
     }
 
     
-    @objc func searchTapped(){
+    @objc fileprivate func searchTapped(){
         debugLog("tapped")
         setSearchNavigaionBtn()
         searchEnabled.toggle()
@@ -72,14 +74,14 @@ class HeadlinesVC: UIViewController {
         isSearchResultsShown = false
     }
     
-    func addResetButton() {
+    fileprivate func addResetButton() {
         let button = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelSearchTapped))
         button.tintColor = .label
         navigationItem.rightBarButtonItems?.append(button)
 
     }
     
-    @objc func cancelSearchTapped(){
+    @objc fileprivate func cancelSearchTapped(){
         title = headlinesVCTitle
         tableHeadlines = feedHeadlinesModel.headlines
         headlinesTable.reloadData()
@@ -224,11 +226,11 @@ extension HeadlinesVC: UITextFieldDelegate{
     }
     
     
-    func requestSearchForHeadlines(_ searchText: String){
+    fileprivate func requestSearchForHeadlines(_ searchText: String){
         requestHeadlines(searchText)
         searchEnabled = false
         enableSearchUI(show: searchEnabled)
-        title = "Search Results"
+        title = searchResultsVCTitle
         addResetButton()
     }
 }
