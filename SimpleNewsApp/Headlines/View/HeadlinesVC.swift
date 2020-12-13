@@ -199,7 +199,7 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
         guard let cell = tableView.dequeueReusableCell(withIdentifier: HeadlineTableViewCell.Id) as? HeadlineTableViewCell else {return UITableViewCell()}
         
         cell.configure(model: tableHeadlines[indexPath.row])
-
+        cell.delegate = self
         return cell
     }
     
@@ -216,6 +216,14 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
             
             cell.configImage(urlString: tableHeadlines[indexPath.row].imageUrlString)
         }
+    }
+}
+
+extension HeadlinesVC: HeadlineTableViewCellDelegate{
+    func cell(urlString: String , updatesFavoriteState isFavorite: Bool) {
+        let model = tableHeadlines.first{ $0.url == urlString }
+        // TODO: save it
+        debugLog(model?.title ?? "")
     }
 }
 
