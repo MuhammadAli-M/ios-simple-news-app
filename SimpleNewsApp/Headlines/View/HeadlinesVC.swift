@@ -209,6 +209,14 @@ extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
 
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let indicies = self.headlinesTable.indexPathsForVisibleRows, indicies.contains(indexPath) {
+            
+            guard let cell = cell as? HeadlineTableViewCell else {return}
+            
+            cell.configImage(urlString: tableHeadlines[indexPath.row].imageUrlString)
+        }
+    }
 }
 
 extension HeadlinesVC: UITextFieldDelegate{

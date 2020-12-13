@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class HeadlineTableViewCell: UITableViewCell {
 
@@ -14,14 +15,13 @@ class HeadlineTableViewCell: UITableViewCell {
     @IBOutlet weak var source: UILabel!
     @IBOutlet weak var date: UILabel!
     @IBOutlet weak var desc: UILabel!
-    @IBOutlet weak var headlineImage: UIImageView!
+    @IBOutlet weak var headlineImageView: UIImageView!
     
     static let Id = "HeadlineTableViewCell"
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        headlineImage.contentMode = .scaleAspectFit
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -40,7 +40,30 @@ class HeadlineTableViewCell: UITableViewCell {
         date.textColor = .secondaryLabel
         date.font = UIFont.preferredFont(forTextStyle: .body)
         desc.text = model.desc
-//        headlineImage.image = UIImage(named: model.imageName) // FIXME: update the image 
+    }
+    
+    func configImage(urlString: String?){
+        guard let url = URL(string: urlString ?? "") else { return }
+        let resource = ImageResource(downloadURL: url, cacheKey: urlString)
+        let processor = DownsamplingImageProcessor(size: headlineImageView.bounds.size)
+                     |> RoundCornerImageProcessor(cornerRadius: 7)
+        headlineImageView.kf.indicatorType = .activity
+        headlineImageView.kf.setImage(
+            with: resource,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+            ], completionHandler:
+                {
+                    result in
+                    switch result {
+                    case .success(let value):
+                        debugLog("image loaded for: \(value.source.url?.absoluteString ?? "")")
+                    case .failure(let error):
+                        errorLog("image failed: \(error.localizedDescription)")
+                    }
+                })
+
     }
 }
 
@@ -51,7 +74,7 @@ struct HeadlineCellModel{
     var dateToString: ((Date) -> (String))
     var desc: String
     var url: String
-    var imageUrl: String?
+    var imageUrlString: String?
     
     func dateString() -> String {
         return dateToString(date)
