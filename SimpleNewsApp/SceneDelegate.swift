@@ -10,11 +10,11 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    // TODO: update this to be automatic
-    let firstTime = false
+
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
-        
+        let firstTime = Caching.shared().objectForKey(key: .firstLanuch) as? Bool ?? true
+        Caching.shared().setKey(key: .firstLanuch, value: false)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let windowScene = scene as? UIWindowScene else { return }
         let controllerIdentifier = firstTime ? OnBoardingVC.storyboardId: HeadlinesVC.storyboardId
