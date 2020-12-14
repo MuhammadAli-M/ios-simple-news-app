@@ -25,3 +25,17 @@ I used the `Kingfisher` pod to fetch the headline's image of the `HeadlineTableV
 ## Notes 
 
 Some headlines may be repeated. This is as there as some common headlines between the selected categories. I also show the category beside the source newspaper. 
+
+## Screenshots
+
+### Welcome 
+
+<img alt="welcome" align="left" width="400" src="https://user-images.githubusercontent.com/36597057/102044503-97e06900-3ddf-11eb-940e-bf9db0340df5.png">
+
+<img alt="welcome_validation" align="right" width="400" src="https://user-images.githubusercontent.com/36597057/102044526-a3cc2b00-3ddf-11eb-9700-1b4f79f79a12.png">
+
+<img alt="headlines" align="left" width="400" src="https://user-images.githubusercontent.com/36597057/102044518-9f077700-3ddf-11eb-9ddf-f9c1e5f8ba6c.png">
+
+<img alt="search" align="right" width="400" src="https://user-images.githubusercontent.com/36597057/102044525-a3339480-3ddf-11eb-8df2-dcf950800cce.png">
+
+<img alt="search results" align="left" width="400" src="https://user-images.githubusercontent.com/36597057/102044521-a038a400-3ddf-11eb-9e58-da54ee5466e2.png">
