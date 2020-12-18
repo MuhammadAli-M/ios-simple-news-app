@@ -148,7 +148,7 @@
                                 <rect key="frame" x="8" y="412" width="398" height="413"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CategoryTableCell" textLabel="mOr-sK-tuI" style="IBUITableViewCellStyleDefault" id="Soq-BZ-IGC">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CategoryTableCell" textLabel="mOr-sK-tuI" style="IBUITableViewCellStyleDefault" id="Soq-BZ-IGC" customClass="OnBoardingTableViewCell" customModule="SimpleNewsApp" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="398" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Soq-BZ-IGC" id="39w-US-qmS">

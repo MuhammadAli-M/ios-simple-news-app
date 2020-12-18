@@ -25,6 +25,7 @@ class OnBoardingVC: UIViewController {
     let CategoryCellReuseIdentifier = "CategoryTableCell"
     let requiredNumberOfSelectedCategories = 3
     
+    lazy var presenter = OnBoardingPresenter(view: self)
     
     // MARK: Lifecycle
     override func viewDidLoad() {
@@ -33,6 +34,7 @@ class OnBoardingVC: UIViewController {
         setupTitleAndLabels()
         setupCountriesPicker()
         setupCategoriesTableView()
+        presenter.viewDidLoad()
     }
     
     
@@ -85,93 +87,6 @@ class OnBoardingVC: UIViewController {
 }
 
 
-extension OnBoardingVC: UIPickerViewDelegate, UIPickerViewDataSource{
-    
-    fileprivate func setupCountriesPicker() {
-        countryPicker.delegate = self
-        countryPicker.dataSource = self
-        updatePickerSourceData()
-    }
-
-    fileprivate func updatePickerSourceData(){
-        availableCountries = CountryManager().availableCountries()
-        selectedCountry = availableCountries.first
-    }
-    
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        availableCountries.count
-    }
-    
-
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        availableCountries[row]
-    }
-    
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        debugLog("selected country: \(availableCountries[row])")
-    }
-}
-
-
-extension OnBoardingVC: UITableViewDelegate, UITableViewDataSource{
-    
-    
-    fileprivate func setupCategoriesTableView(){
-        categoriesTable.register(UITableViewCell.self, forCellReuseIdentifier: CategoryCellReuseIdentifier)
-        categoriesTable.delegate = self
-        categoriesTable.dataSource = self
-        categoriesTable.allowsMultipleSelection = true
-        
-        updateCategoriesTableSourceData()
-    }
-    
-    
-    fileprivate func updateCategoriesTableSourceData(){
-        availableCategories =  NewsAPIConstants.avaiableCategories
-    }
-
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return availableCategories.count
-    }
-    
-    
-    // TODO: save strings in variables
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCellReuseIdentifier) ?? UITableViewCell()
-        cell.textLabel?.text = availableCategories[indexPath.row].capitalized
-        // TODO: improve the selection style
-        return cell
-    }
-    
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedCategories.append(availableCategories[indexPath.row])
-        debugLog("selected: \(availableCategories[indexPath.row])")
-    }
-    
-    
-    func tableViewDidEndMultipleSelectionInteraction(_ tableView: UITableView) {
-        let rows = tableView.indexPathsForSelectedRows?.map({ $0.row })
-        debugLog("multiple-selected indicies: \(String(describing: rows))")
-        rows?.forEach{
-            selectedCategories.append(availableCategories[$0])
-        }
-    }
-    
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        selectedCategories.removeAll{ $0 == availableCategories[indexPath.row] }
-        debugLog("deselected: \(availableCategories[indexPath.row])")
-    }
-}
 
 
 extension OnBoardingVC: Storyboardable{

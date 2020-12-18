@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+class CategoriesInteractor{
+    func getCatagories(completeionHandler: (([CategoryName], Error?) -> Void)){
+        
+        completeionHandler( NewsAPIConstants.avaiableCategories, nil)
+        
+    }
+}
