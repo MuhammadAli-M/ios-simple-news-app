@@ -11,6 +11,8 @@ protocol OnBoardingView: class {
     func fetchingCatagoriesSuccessfully()
     func fetchingCountriesSuccessfully()
     func showError(error: String)
+    func navigateToHeadlinesVC(country: CountryName, categories: [CategoryName])
+    func showAlert(title: String, message: String)
 }
 
 protocol OnBoardingCategoryCell {
@@ -24,15 +26,20 @@ class OnBoardingPresenter {
     private let counrtriesInteractor = CountryManager() // TODO: Rename the class CountryManager
     private var categories = [ CategoryName]()
     private var selectedCategories = [ CategoryName]()
+    private var selectedCountry: CountryName?
+    private let requiredNumberOfSelectedCategories = 3
+    private let alertRules = "Please choose a country and 3 favorite categories"
+    private let alertTitle = "Required Info"
 
     init(view: OnBoardingView) {
         self.view = view
     }
-    
+    // MARK:- LifeCycle
     func viewDidLoad(){
         getCategories()
     }
     
+    // MARK:- Categories
     func getCategories(){
         catagoriesInteractor.getCatagories { [weak self] (categories, error) in
             
@@ -73,5 +80,36 @@ class OnBoardingPresenter {
             selectedCategories.append(categories[$0])
         }
         debugLog("multiple-selected indicies: \(indicies)")
+    }
+    
+    // MARK:- Navigation
+    func nextTapped(){
+        if let selectionValidMessage = validateSelections(){
+            debugLog(selectionValidMessage)
+            view?.showAlert(title: alertTitle, message: "\(selectionValidMessage)\n\(alertRules)")
+        }else {
+            guard let selectedCountry = selectedCountry else { return }
+            view?.navigateToHeadlinesVC(country: selectedCountry, categories: selectedCategories)
+        }
+    }
+    
+    // TODO: improve it to use errors
+    fileprivate func validateSelections() -> String?{
+        var message: String?
+        guard let _ = selectedCountry else {
+            message = "A country should be selected."
+            return message
+        }
+        
+        guard !selectedCategories.isEmpty else {
+            message = "\(requiredNumberOfSelectedCategories) categories should be selected"
+            return message
+        }
+        
+        if selectedCategories.count != requiredNumberOfSelectedCategories {
+            message = "Selected caregories number do not equal \(requiredNumberOfSelectedCategories)."
+        }
+        
+        return message
     }
 }
