@@ -25,6 +25,7 @@ class OnBoardingPresenter {
     private let catagoriesInteractor = CategoriesInteractor()
     private let counrtriesInteractor = CountryManager() // TODO: Rename the class CountryManager
     private var categories = [ CategoryName]()
+    private var countries = [CountryName]()
     private var selectedCategories = [ CategoryName]()
     private var selectedCountry: CountryName?
     private let requiredNumberOfSelectedCategories = 3
@@ -34,9 +35,30 @@ class OnBoardingPresenter {
     init(view: OnBoardingView) {
         self.view = view
     }
+    
     // MARK:- LifeCycle
     func viewDidLoad(){
+        getCountries()
         getCategories()
+    }
+    
+    // MARK:- Countries
+    func getCountries(){
+        countries = counrtriesInteractor.availableCountries()
+        view?.fetchingCountriesSuccessfully()
+    }
+    
+    func getCountriesCount() -> Int{
+        countries.count
+    }
+    
+    func country(atIndex index: Int) -> CountryName{
+        countries[index]
+    }
+    
+    func didSelectCountry(index: Int){
+        selectedCountry = countries[index]
+        debugLog("selected: \(countries[index])")
     }
     
     // MARK:- Categories

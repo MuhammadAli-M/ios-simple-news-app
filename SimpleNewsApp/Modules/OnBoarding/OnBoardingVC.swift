@@ -11,9 +11,6 @@ typealias CategoryName = String
 typealias CountryName = String
 
 class OnBoardingVC: UIViewController {
-    // TODO: remove after refactoring the picker view
-    var availableCountries = [CountryName]()
-    var selectedCountry: CountryName?
     
     @IBOutlet weak var countryPicker: UIPickerView!
     @IBOutlet weak var categoriesTable: UITableView!
@@ -33,12 +30,9 @@ class OnBoardingVC: UIViewController {
         presenter.viewDidLoad()
     }
     
-    
     // MARK: Actions
-    
     @objc func nextTapped(){
         presenter.nextTapped()
-        
     }
     
     func navigateToHeadlinesVC(country: CountryName, categories: [CategoryName]){
@@ -51,7 +45,6 @@ class OnBoardingVC: UIViewController {
     }
     
     // MARK: Methods
-    
     fileprivate func setupTitleAndLabels() {
         title = "Welcome"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -62,11 +55,8 @@ class OnBoardingVC: UIViewController {
         
         categoriesSelectionLabel.text = "Select Category"
         categoriesSelectionLabel.font = UIFont.preferredFont(forTextStyle: .title2)
-        
     }
 }
-
-
 
 
 extension OnBoardingVC: Storyboardable{

@@ -15,12 +15,14 @@ extension OnBoardingVC: OnBoardingView{
     }
     
     func fetchingCountriesSuccessfully() {
-        // update picker view
+        DispatchQueue.main.async {
+            self.countryPicker.reloadAllComponents()
+            self.presenter.didSelectCountry(index: 0)
+        }
     }
     
     func showError(error: String) {
         errorLog("presenter error: \(error)")
     }
-    
     
 }

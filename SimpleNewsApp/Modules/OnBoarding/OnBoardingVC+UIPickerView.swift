@@ -12,14 +12,7 @@ extension OnBoardingVC: UIPickerViewDelegate, UIPickerViewDataSource{
     func setupCountriesPicker() {
         countryPicker.delegate = self
         countryPicker.dataSource = self
-        updatePickerSourceData()
     }
-
-    fileprivate func updatePickerSourceData(){
-        availableCountries = CountryManager().availableCountries()
-        selectedCountry = availableCountries.first
-    }
-    
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -27,16 +20,16 @@ extension OnBoardingVC: UIPickerViewDelegate, UIPickerViewDataSource{
 
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        availableCountries.count
+        presenter.getCountriesCount()
     }
     
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        availableCountries[row]
+        presenter.country(atIndex: row)
     }
     
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        debugLog("selected country: \(availableCountries[row])")
+        presenter.didSelectCountry(index: row)
     }
 }
