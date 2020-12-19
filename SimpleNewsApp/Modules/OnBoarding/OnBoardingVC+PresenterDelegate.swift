@@ -5,7 +5,7 @@
 //  Created by Muhammad Adam on 12/17/20.
 //
 
-import Foundation
+import UIKit
 
 extension OnBoardingVC: OnBoardingView{
     func fetchingCatagoriesSuccessfully() {
@@ -25,4 +25,12 @@ extension OnBoardingVC: OnBoardingView{
         errorLog("presenter error: \(error)")
     }
     
+    func navigateToHeadlinesVC(country: CountryName, categories: [CategoryName]){
+        let vc = HeadlinesVC.instantiateVC()
+        vc.categories = categories
+        vc.country = country
+        let navigation = UINavigationController(rootViewController: vc)
+        navigation.modalPresentationStyle = .fullScreen
+        present(navigation, animated: true, completion: nil)
+    }
 }

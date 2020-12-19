@@ -34,16 +34,7 @@ class OnBoardingVC: UIViewController {
     @objc func nextTapped(){
         presenter.nextTapped()
     }
-    
-    func navigateToHeadlinesVC(country: CountryName, categories: [CategoryName]){
-        let vc = HeadlinesVC.instantiateVC()
-        vc.categories = categories
-        vc.country = country
-        let navigation = UINavigationController(rootViewController: vc)
-        navigation.modalPresentationStyle = .fullScreen
-        present(navigation, animated: true, completion: nil)
-    }
-    
+        
     // MARK: Methods
     fileprivate func setupTitleAndLabels() {
         title = "Welcome"
