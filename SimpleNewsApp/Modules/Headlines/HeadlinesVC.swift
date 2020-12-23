@@ -10,11 +10,11 @@ import UIKit
 //typealias Headline = String
 
 protocol HeadlinesModel {
-    var headlines: [HeadlineCellModel] { get set}
+    var headlines: [Headline] { get set}
 }
 
 class SearchHeadlinesModel: HeadlinesModel {
-    var headlines = [HeadlineCellModel]()
+    var headlines = [Headline]()
     var searchText: String
     
     init(searchText: String){
@@ -23,12 +23,12 @@ class SearchHeadlinesModel: HeadlinesModel {
 }
 
 class FeedHeadlinesModel: HeadlinesModel {
-    var headlines = [HeadlineCellModel]()
+    var headlines = [Headline]()
 }
 
 class HeadlinesVC: UIViewController {
     
-    private var tableHeadlines =  [HeadlineCellModel]()
+    private var tableHeadlines =  [Headline]()
     var categories: [CategoryName]?
     var country: CountryName?
     @IBOutlet weak var searchTextField: UITextField!
@@ -42,14 +42,21 @@ class HeadlinesVC: UIViewController {
     private var feedHeadlinesModel: HeadlinesModel = FeedHeadlinesModel()
     private var isSearchResultsShown = false
     
+    // TODO: think of refactoring the presenter initialization
+    var presenter: HeadlinesViewPresenter!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.searchTextField.alpha = 0
         self.searchTextField.isHidden = true
         self.searchTextField.delegate = self
+        guard let country = country, let categories = categories else {return}
+        presenter = HeadlinesPresenter(view: self,
+                                       country: country,
+                                       categories: categories)
         setupTitleAndBarButton()
         setupTableView(table: headlinesTable)
-        requestHeadlines()
+        presenter.getHeadlines()
     }
     
     
@@ -113,118 +120,6 @@ class HeadlinesVC: UIViewController {
             
         }completion: { (_) in}
     }
-    
-    // TODO: refactor this method to separate the UI & logic handling
-    fileprivate func requestHeadlines(_ searchText: String? = nil) {
-        let group = DispatchGroup()
-        guard let categories = categories,
-              let country = country,
-              let countryCode = CountryManager().codeForCountryName(country) else {return}
-        
-        var model: HeadlinesModel = feedHeadlinesModel
-        // TODO: finsih it
-        if let searchText = searchText {
-            model = SearchHeadlinesModel(searchText: searchText)
-            searchHeadlinesModel = model
-            isSearchResultsShown = true
-        }
-        
-        categories.forEach{ category in
-            group.enter()
-            HeadlinesService.shared.getHeadlines(countryCode: countryCode,
-                                                 category: category,
-                                                 searchText: searchText) { [weak self ](headlines, error) in
-                self?.updateHeadlines(headlinesSource: &model.headlines ,
-                                      headlines,
-                                      category: category)
-                group.leave()
-            }
-        }
-
-        
-        group.notify(queue: DispatchQueue.global()) {
-            self.tableHeadlines = model.headlines
-
-            self.tableHeadlines.sort { (first, second) -> Bool in
-                first.date.compare(second.date) == .orderedDescending
-            }
-            DispatchQueue.main.async {
-                self.headlinesTable.reloadData()
-            }
-        }
-    }
-
-    fileprivate func updateHeadlines(headlinesSource: inout [HeadlineCellModel] ,
-                                     _ headlines: [Article],
-                                     category: CategoryName) {
-        let cellModels = headlines.map{ headlineReponse -> HeadlineCellModel in
-            let title = headlineReponse.title
-            let desc = headlineReponse.articleDescription
-            let date = headlineReponse.publishedAt
-            let sourceName = headlineReponse.source.name
-            let url = headlineReponse.url
-            let imageUrl = headlineReponse.urlToImage
-            let model = HeadlineCellModel(title: title,
-                                          source: sourceName + " | " + category.capitalized, // TODO: Localization
-                                          date: date,
-                                          dateToString:  { (someDate: Date) -> String in
-                                                            someDate.string(format: "MMM d, h:mm a")},
-                                          desc: desc ?? "",
-                                          url: url,
-                                          imageUrlString: imageUrl ?? "") // FIXME: udpate image name properly
-            return model
-        }
-        headlinesSource.append( contentsOf: cellModels)
-    }
-
-}
-
-
-extension HeadlinesVC: UITableViewDelegate, UITableViewDataSource{
-    
-    
-    fileprivate func setupTableView(table: UITableView){
-        table.delegate = self
-        table.dataSource = self
-        table.rowHeight = UITableView.automaticDimension
-        table.estimatedRowHeight = 200
-    }
-    
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableHeadlines.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: HeadlineTableViewCell.Id) as? HeadlineTableViewCell else {return UITableViewCell()}
-        
-        cell.configure(model: tableHeadlines[indexPath.row])
-        cell.delegate = self
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let url = URL(string: tableHeadlines[indexPath.row].url) else { return }
-        UIApplication.shared.open(url)
-
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let indicies = self.headlinesTable.indexPathsForVisibleRows, indicies.contains(indexPath) {
-            
-            guard let cell = cell as? HeadlineTableViewCell else {return}
-            
-            cell.configImage(urlString: tableHeadlines[indexPath.row].imageUrlString)
-        }
-    }
-}
-
-extension HeadlinesVC: HeadlineTableViewCellDelegate{
-    func cell(urlString: String , updatesFavoriteState isFavorite: Bool) {
-        let model = tableHeadlines.first{ $0.url == urlString }
-        // TODO: save it
-        debugLog(model?.title ?? "")
-    }
 }
 
 extension HeadlinesVC: UITextFieldDelegate{
@@ -243,7 +138,7 @@ extension HeadlinesVC: UITextFieldDelegate{
     
     
     fileprivate func requestSearchForHeadlines(_ searchText: String){
-        requestHeadlines(searchText)
+//        requestHeadlines(searchText)
         searchEnabled = false
         enableSearchUI(show: searchEnabled)
         title = searchResultsVCTitle
