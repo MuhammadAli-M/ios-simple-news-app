@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+protocol SearchView: class {
+    var country: CountryName? { get set}
+    var categories: [CategoryName]? { get set}
+    func navigateToSearchResultsVC(searchText: String)
+}
