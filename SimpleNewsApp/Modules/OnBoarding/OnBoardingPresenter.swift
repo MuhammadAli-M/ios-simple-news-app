@@ -29,7 +29,7 @@ class OnBoardingPresenter {
     private var selectedCategories = [ CategoryName]()
     private var selectedCountry: CountryName?
     private let requiredNumberOfSelectedCategories = 3
-    private let alertRules = "Please choose a country and 3 favorite categories"
+    private lazy var alertRules = "Please choose a country and \(requiredNumberOfSelectedCategories) favorite categories"
     private let alertTitle = "Required Info"
 
     init(view: OnBoardingView) {
@@ -111,6 +111,9 @@ class OnBoardingPresenter {
             view?.showAlert(title: alertTitle, message: "\(selectionValidMessage)\n\(alertRules)")
         }else {
             guard let selectedCountry = selectedCountry else { return }
+            
+            saveState(country: selectedCountry, categories: selectedCategories)
+            
             view?.navigateToHeadlinesVC(country: selectedCountry, categories: selectedCategories)
         }
     }
@@ -133,5 +136,10 @@ class OnBoardingPresenter {
         }
         
         return message
+    }
+    
+    func saveState(country: CountryName, categories: [CategoryName]){
+        Caching.shared().setKey(key: .selectedCountry, value: country)
+        Caching.shared().setKey(key: .selectedCategories, value: categories)
     }
 }

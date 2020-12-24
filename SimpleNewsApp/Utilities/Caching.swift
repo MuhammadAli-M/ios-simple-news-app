@@ -9,6 +9,8 @@ import Foundation
 
 public enum UserDefaultsKey: String {
     case firstLanuch
+    case selectedCountry
+    case selectedCategories
 }
 
 struct Caching{
