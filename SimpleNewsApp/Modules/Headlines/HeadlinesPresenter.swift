@@ -13,7 +13,8 @@ class HeadlinesPresenter: HeadlinesViewPresenter{
     var categories: [CategoryName]
     weak var view:HeadlinesView?
     var headlines = [Headline]()
-    
+    var headlinesInteractor = HeadlinesService.shared
+        
     required init(view: HeadlinesView, country: CountryName, categories: [CategoryName]) {
         self.view = view
         self.country = country
@@ -31,7 +32,7 @@ class HeadlinesPresenter: HeadlinesViewPresenter{
                 
         categories.forEach{ category in
             group.enter()
-            HeadlinesService.shared.getHeadlines(countryCode: countryCode,
+            headlinesInteractor.getHeadlines(countryCode: countryCode,
                                                  category: category) { [weak self ](newHeadlines, error) in
                 self?.updateHeadlines(newHeadlines,
                                       category: category)
@@ -50,7 +51,7 @@ class HeadlinesPresenter: HeadlinesViewPresenter{
         }
     }
 
-    fileprivate func updateHeadlines(_ newHeadlines: [Article],
+    func updateHeadlines(_ newHeadlines: [Article],
                                      category: CategoryName) {
         
         
@@ -76,12 +77,12 @@ class HeadlinesPresenter: HeadlinesViewPresenter{
     }
     
     
-    
     func searchBtnTapped() {
         debugLog("")
-    }    
+    }
 }
 
+// MARK: Headlines Data Source
 extension HeadlinesPresenter{
     
     typealias Cell = HeadlinesCell
