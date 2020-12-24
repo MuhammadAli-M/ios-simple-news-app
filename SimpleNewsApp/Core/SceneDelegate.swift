@@ -13,15 +13,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
-        let firstTime = Caching.shared().objectForKey(key: .firstLanuch) as? Bool ?? true
-        Caching.shared().setKey(key: .firstLanuch, value: false)
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let windowScene = scene as? UIWindowScene else { return }
-        let controllerIdentifier = firstTime ? OnBoardingVC.storyboardId: HeadlinesVC.storyboardId
-        let vc = storyboard.instantiateViewController (withIdentifier: controllerIdentifier)
-        let navigation = UINavigationController(rootViewController: vc)
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = navigation
+        window?.rootViewController = getInitialVC()
         window?.makeKeyAndVisible()
         
         guard let _ = (scene as? UIWindowScene) else { return }
@@ -55,6 +49,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
 
+    
+    // MARK:- Methods
+    func getInitialVC() -> UIViewController{
+        let firstTime = Caching.shared().objectForKey(key: .firstLanuch) as? Bool ?? true
+        Caching.shared().setKey(key: .firstLanuch, value: false)
+        let storyboard = UIStoryboard(name: StoryboardName.Main.rawValue, bundle: nil)
+        
+        let vc: UIViewController
+        if firstTime{
+            vc = storyboard.instantiateViewController (withIdentifier: OnBoardingVC.storyboardId)
+        }else{
+            vc = storyboard.instantiateViewController (withIdentifier: HeadlinesVC.storyboardId)
+            if let headlinesVC = vc as? HeadlinesVC{
+                if let country = Caching.shared().objectForKey(key: .selectedCountry) as? CountryName,
+                   let categories = Caching.shared().objectForKey(key: .selectedCategories) as? [CategoryName] {
+                    headlinesVC.country = country
+                    headlinesVC.categories = categories
+                }
+            }
+            
+        }
+        return UINavigationController(rootViewController: vc)
+    }
 
 }
 
