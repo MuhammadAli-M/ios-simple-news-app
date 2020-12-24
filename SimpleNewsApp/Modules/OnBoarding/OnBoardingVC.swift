@@ -18,12 +18,12 @@ class OnBoardingVC: UIViewController {
     @IBOutlet weak var categoriesSelectionLabel: UILabel!
 
     
-    lazy var presenter = OnBoardingPresenter(view: self)
+    var presenter: OnBoardingViewPresenter!
     
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        presenter = OnBoardingPresenter(view: self)
         setupTitleAndLabels()
         setupCountriesPicker()
         setupCategoriesTableView()

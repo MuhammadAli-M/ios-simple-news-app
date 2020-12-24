@@ -7,19 +7,11 @@
 
 import Foundation
 
-protocol OnBoardingView: class {
-    func fetchingCatagoriesSuccessfully()
-    func fetchingCountriesSuccessfully()
-    func showError(error: String)
-    func navigateToHeadlinesVC(country: CountryName, categories: [CategoryName])
-    func showAlert(title: String, message: String)
-}
-
 protocol OnBoardingCategoryCell {
     func displayName(name: String)
 }
 
-class OnBoardingPresenter {
+class OnBoardingPresenter: OnBoardingViewPresenter {
     
     private weak var view: OnBoardingView?
     private let catagoriesInteractor = CategoriesInteractor()
