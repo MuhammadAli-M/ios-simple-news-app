@@ -36,7 +36,7 @@ class OnBoardingPresenter: OnBoardingViewPresenter {
     
     // MARK:- Countries
     func getCountries(){
-        countries = counrtriesInteractor.availableCountries()
+        countries = counrtriesInteractor.availableCountries().sorted()
         view?.fetchingCountriesSuccessfully()
     }
     
