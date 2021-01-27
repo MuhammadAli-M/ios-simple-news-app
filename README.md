@@ -24,7 +24,7 @@ I used the `Kingfisher` pod to fetch the headline's image of the `HeadlineTableV
 
 ## Notes 
 
-Some headlines may be repeated. This is as there as some common headlines between the selected categories. I also show the category beside the source newspaper. 
+Some headlines may be repeated. This is as there are some common headlines among the selected categories. I also show the category beside the source newspaper. 
 
 ## Screenshots
 
